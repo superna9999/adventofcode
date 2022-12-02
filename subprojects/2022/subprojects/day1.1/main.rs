@@ -11,48 +11,26 @@ where P: AsRef<Path>, {
 
 fn main() {
 	let args: Vec<String> = env::args().collect();
-	let mut v: Vec<Vec<i32>> = Vec::new();
-	let mut cur: usize = 0;
-
-	v.push(Vec::new());
+	let mut v: Vec<i32> = Vec::new();
+	let mut sum: i32 = 0;
 
 	if let Ok(lines) = read_lines(&args[1]) {
 		for line in lines {
 			if let Ok(ip) = line {
 				if ip == "" {
-					cur += 1;
-					v.push(Vec::new());
+					v.push(sum);
+					sum = 0;
 				} else {
 					let parsed: i32 = ip.parse().unwrap();
-					v[cur].push(parsed);
+					sum += parsed;
 				}
 			}
 		}
+		v.push(sum);
 	}
 
-	let mut max = [0, 0, 0];
+	v.sort();
+	v.reverse();
 
-	for i in v {
-		let mut sum: i32 = 0;
-
-		for c in &i {
-			sum += c;
-		}
-		
-		for number in (0..3).rev() {
-			if sum > max[number] {
-				if number == 2 {
-					max[0] = max[1];
-					max[1] = max[2];
-				}
-				else if number == 1 {
-					max[0] = max[1];
-				}
-				max[number] = sum;
-				break;
-			}
-		}
-	}
-
-	println!("{}", max[0] + max[1] + max[2]);
+	println!("{}", v[0] + v[1] + v[2]);
 }
