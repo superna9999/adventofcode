@@ -11,18 +11,23 @@ where P: AsRef<Path>, {
 fn parse_line(line: &str, count: usize)
 {
 	assert!(line.len() >= count);
-	for i in 0..(line.len() - count) {
-		let mut matched = false;
-		for a in i..(i + count) {
-			for b in (a + 1)..(i + count) {
-				if line.chars().skip(a).take(1).eq(line.chars().skip(b).take(1)) {
-					matched = true;
-				}
+	let mut window_len: usize = 0;
+
+	for (i, a) in line.char_indices() {
+		match line[(i + 1)..].chars()
+				.take(count - window_len - 1)
+				.position(|b|a == b) {
+			Some(_p) => {
+				window_len = 0;
+				continue;
+			}
+			None => {
+				window_len += 1;
 			}
 		}
 
-		if matched == false {
-			println!("{}", i + count);
+		if window_len == count {
+			println!("{}", i + 1);
 			return;
 		}
 	}
